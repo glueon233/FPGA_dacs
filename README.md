@@ -46,6 +46,8 @@ SDM — Sigma-Delta 调制器
 - **外部 DAC 滤波器**: 两级二阶 Sallen-Key 带通滤波器
 
 ## 外部模拟滤波器
+<img width="1013" height="653" alt="Screenshot 2026-03-23 154213" src="https://github.com/user-attachments/assets/2c3b4bac-0495-4851-9d32-b15dd5e09d82" />
+
 
 PDM 输出需经模拟低通滤波恢复音频。本设计使用**两级二阶 Sallen-Key 带通滤波器**：
 
@@ -69,4 +71,5 @@ PDM 输出需经模拟低通滤波恢复音频。本设计使用**两级二阶 S
 
 ## 输出效果
 
-PDM 输出经外部 Sallen-Key 滤波器后，可重建高质量的模拟音频波形，有效抑制带外噪声，通带内保持平坦响应。
+<img width="1947" height="992" alt="Screenshot 2026-05-10 160012" src="https://github.com/user-attachments/assets/81e8224f-7182-44a2-888c-81798113cb4b" />
+输出效果仅由一阶RC无源滤波，由于fpga输出单极性，所以测试波形有很大的直流分量，且SNR约为10db。实测再经过一级运放放大会有效提升SNR。
