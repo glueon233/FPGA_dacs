@@ -1,0 +1,109 @@
+module audio_top_v2 (
+    input  wire clk,
+    input  wire rst_n,
+    
+    input  wire iis_bclk,
+    input  wire iis_lrclk,
+    input  wire iis_sdata,
+
+    output wire [15:0] pcm_4x_l,
+    output wire [15:0] pcm_4x_r,
+    output wire        valid_4x
+);
+
+wire sclk;
+wire locked;
+wire wizard_rst = ~rst_n; 
+
+clk_wiz_0 pll_5024 (
+    .clk_out1(sclk),
+    .reset(wizard_rst),  
+    .locked(locked),     
+    .clk_in1(clk)
+);
+
+
+wire system_rst_n = rst_n & locked;
+
+
+wire [15:0] l_pcm_1x, r_pcm_1x;
+wire        valid_1x;
+
+iis_rx iis_inst (
+    .clk(sclk),
+     .rst_n(system_rst_n),
+    .ws(iis_lrclk),
+    .bclk(iis_bclk),
+    .sdata(iis_sdata),
+    .l_pcm(l_pcm_1x), 
+    .r_pcm(r_pcm_1x),
+    .data_valid(valid_1x)
+);
+
+wire [23:0] l_2x_data, r_2x_data;
+wire        valid_2x_l, valid_2x_r;
+
+fir_compiler_0 fir_l_2x (
+    .aclk(sclk),
+    .s_axis_data_tvalid(valid_1x),
+    .s_axis_data_tready(),
+    .s_axis_data_tdata(l_pcm_1x),
+    .m_axis_data_tvalid(valid_2x_l),
+    .m_axis_data_tdata(l_2x_data)
+);
+
+fir_compiler_0 fir_r_2x (
+    .aclk(sclk),
+    .s_axis_data_tvalid(valid_1x),
+    .s_axis_data_tready(),
+    .s_axis_data_tdata(r_pcm_1x),
+    .m_axis_data_tvalid(valid_2x_r),
+    .m_axis_data_tdata(r_2x_data)
+);
+
+wire [23:0] l_4x_data, r_4x_data;
+wire        valid_4x_l, valid_4x_r;
+
+fir_compiler_1 fir_l_4x (
+    .aclk(sclk),
+    .s_axis_data_tvalid(valid_2x_l),
+    .s_axis_data_tready(),
+    .s_axis_data_tdata(l_2x_data), 
+    .m_axis_data_tvalid(valid_4x_l),
+    .m_axis_data_tdata(l_4x_data)
+);
+
+fir_compiler_1 fir_r_4x (
+    .aclk(sclk),
+    .s_axis_data_tvalid(valid_2x_r),
+    .s_axis_data_tready(),
+    .s_axis_data_tdata(r_2x_data), 
+    .m_axis_data_tvalid(valid_4x_r),
+    .m_axis_data_tdata(r_4x_data)
+);
+
+wire [15:0] l_64x_data, r_64x_data;
+wire        valid_64x_l, valid_64x_r;
+fir_compiler_2 fir_l_64x (
+    .aclk(sclk),
+    .s_axis_data_tvalid(valid_4x_l),
+    .s_axis_data_tready(),
+    .s_axis_data_tdata(l_4x_data), 
+    .m_axis_data_tvalid(valid_64x_l),
+    .m_axis_data_tdata(l_64x_data)
+);
+
+fir_compiler_2 fir_r_64x (
+    .aclk(sclk),
+    .s_axis_data_tvalid(valid_4x_r),
+    .s_axis_data_tready(),
+    .s_axis_data_tdata(r_4x_data), 
+    .m_axis_data_tvalid(valid_64x_r),
+    .m_axis_data_tdata(r_64x_data)
+);
+
+assign pcm_4x_l = l_4x_data[15:0]; // 假设高16位是有效音频
+assign pcm_4x_r = r_4x_data[15:0];
+assign valid_4x = valid_4x_l & valid_4x_r;
+
+endmodule

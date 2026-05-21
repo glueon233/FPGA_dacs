@@ -1,0 +1,29 @@
+# Vivado simulation, cache, runs, and generated files
+FPGA_DAC.sim/
+FPGA_DAC.cache/
+FPGA_DAC.gen/
+FPGA_DAC.runs/
+FPGA_DAC.hw/
+FPGA_DAC.ip_user_files/
+FPGA_DAC.srcs/utils_1/
+FPGA_DAC.srcs/sim_1/
+
+# Log files
+*.log
+*.jou
+*.str
+*.pb
+*.wdb
+*.wcfg
+
+# Simulation files
+*.vcd
+*.vpd
+*.saif
+*.sdf
+*.bak
+*.swp
+
+# OS files
+Thumbs.db
+.DS_Store
