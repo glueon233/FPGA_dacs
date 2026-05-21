@@ -46,7 +46,8 @@ SDM — Sigma-Delta 调制器
 - **外部 DAC 滤波器**: 两级二阶 Sallen-Key 带通滤波器
 
 ## 外部模拟滤波器
-<img width="1013" height="653" alt="Screenshot 2026-03-23 154213" src="https://github.com/user-attachments/assets/2c3b4bac-0495-4851-9d32-b15dd5e09d82" />
+
+<img width="1101" height="626" alt="Screenshot 2026-05-09 115102" src="https://github.com/user-attachments/assets/230876a4-fdb0-47b9-a90c-db19ca31f515" />
 
 
 PDM 输出需经模拟低通滤波恢复音频。本设计使用**两级二阶 Sallen-Key 带通滤波器**：
